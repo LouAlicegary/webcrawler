@@ -1,0 +1,19 @@
+<h1>Listing resources</h1>
+ 
+<table>
+  	<tr>
+    	<th>ID</th>
+    	<th>Link</th>
+    	<th>Title</th>
+    	<th>Author</th>    	
+  	</tr>
+ 
+	<% @all_resources.each do |r| %>
+  		<tr>
+	    	<td><%= r.id %></td>		
+	    	<td><%= r.link %></td>
+	      	<td><%= r.title %></td>
+	    	<td><%= r.author %></td>
+    	</tr>
+  	<% end %>
+</table>

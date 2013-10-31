@@ -1,0 +1,125 @@
+<h1>Ginkgotree OER Website Listing</h1>
+ 
+<table>
+  	<tr>
+    	<th>ID</th>
+    	<th>Name</th>
+    	<th># of Records Indexed</th>
+    	<th>Last Completed</th>
+    	<th>Edit</th>
+    	<th>Index Site</th>   	
+  	</tr>
+ 
+	<% @all_websites.each do |w| %>
+  		<tr id="row_<%= w.id %>">
+	    	<td><%= w.id %></td>		
+	    	<td><%= w.name %></td>
+	      	<td id="resource_count_<%= w.id %>"><%= w.online_resources.count %></td>
+	      	<td id="timestamp_<%= w.id %>"><%= w.last_completed %></td>
+	      	<td><%= link_to "Edit Info", edit_website_path(w.id) %></td>
+	      	<td><%= link_to_function "Index Site", "doCrawl(#{w.id},'#{w.name}',0)" %></td>
+    	</tr>
+  	<% end %>
+</table>
+
+<br><br>
+<hr>
+<%= link_to 'Add New Website', new_website_path %>
+
+<script>
+	
+	var doCrawl = function(website_id, website_name, resource_count, callback) {	 	
+	 	$.ajax({
+	 		type: 'GET',
+	 		url: '/' + website_name,
+	 		data: { 'id' : website_id,
+	 				'current_count' : resource_count
+	 		},
+	 		success: function(response){
+	 			console.log("doCrawl() success = " + JSON.stringify(response));
+	 			
+	 			// UPDATE RECORD COUNT ON PAGE
+	 			resource_count = getNumRecords(website_id, function(resource_count){
+	 				document.getElementById("resource_count_" + website_id).innerHTML = resource_count;
+	 			});
+	 			
+	 			// UPDATE LAST COMPLETED ON PAGE
+	 			status = response.status;
+	 			if (status === "finished") {
+	 				updateLastCompleted(website_id, function(timestamp){
+	 					document.getElementById("timestamp_" + website_id).innerHTML = timestamp;
+	 				});
+	 			}
+	 			else if (status === "in progress") {
+		 			/*if (resource_count < 1001) {
+		 				setTimeout(function(){
+							doCrawl(website_id, resource_count);
+						}, 5000);
+		 			}*/	
+	 			}
+	 			document.getElementById("timestamp_" + website_id).setAttribute("title", response.count + " records added.");
+	 			
+	 			// EXECUTE CALLBACK IF IT WAS PASSED
+	 			if (callback) {
+	 				callback(response);
+	 			}
+	 		},
+	 		error: function(jqXHR, textStatus, errorThrown ){
+				console.log("DOCRAWL AJAX ERROR");
+	 		},
+	 		dataType: 'json'
+	 	});
+	 		 	
+	};
+	
+	var getNumRecords = function(website_id, callback) {
+	 	$.ajax({
+	 		type: 'GET',
+	 		url: '/resource_count',
+	 		data: { 'id' : website_id },
+	 		success: function(response){
+	 			console.log("GETNUMRECORDS SUCCESS = " + response);
+	 			if (callback) {
+	 				callback(response);
+	 			}
+	 		},
+	 		error: function(jqXHR, textStatus, errorThrown ){
+				console.log("GETNUMRECORDS AJAX ERROR");
+	 		},
+	 		dataType: 'json'
+	 	});
+	};	
+	
+	var updateLastCompleted = function(website_id, callback) {
+	 	$.ajax({
+	 		type: 'POST',
+	 		url: '/websites/update_last_completed',
+	 		data: { 'id' : website_id },
+	 		success: function(timestamp){
+	 			if (callback) {
+	 				callback(timestamp);
+	 			}
+	 		},
+	 		error: function(jqXHR, textStatus, errorThrown ){
+				console.log("GETNUMRECORDS AJAX ERROR");
+	 		},
+	 		dataType: 'json'
+	 	});
+	};	
+	
+	
+	//doCrawl(2, resource_count);
+	
+	/*
+	setInterval(function(){	
+		getNumRecords(1, function() {
+			document.getElementById("resource_count").innerHTML = resource_count;
+		});
+	},10000);
+	
+	setInterval(function(){
+		doCrawl(2, resource_count);
+	}, 5000);
+	*/
+	
+</script>

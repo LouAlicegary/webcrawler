@@ -1,0 +1,50 @@
+<%= form_for :the_object_name, url: websites_path do |f| %>
+  <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </p>
+ 
+  <p>
+    <%= f.label :query_url %><br>
+    <%= f.text_field :query_url %>
+  </p>
+
+  <p>
+    <%= f.label :site_prefix %><br>
+    <%= f.text_field :site_prefix %>
+  </p>
+ 
+  <p>
+    <%= f.label :resource_xpath %><br>
+    <%= f.text_field :resource_xpath %>
+  </p>
+
+  <p>
+    <%= f.label :navigation_xpath %><br>
+    <%= f.text_field :navigation_xpath %>
+  </p>
+
+  <p>
+    <%= f.label :link_xpath %><br>
+    <%= f.text_field :link_xpath %>
+  </p>
+ 
+  <p>
+    <%= f.label :title_xpath %><br>
+    <%= f.text_field :title_xpath %>
+  </p>
+
+  <p>
+    <%= f.label :author_xpath %><br>
+    <%= f.text_field :author_xpath %>
+  </p> 
+  
+  <p>
+    <%= f.label :comments %><br>
+    <%= f.text_area :comments %>
+  </p> 
+    
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
