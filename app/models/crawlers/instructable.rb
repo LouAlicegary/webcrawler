@@ -1,0 +1,3 @@
+class Instructable < OnlineResource
+
+end

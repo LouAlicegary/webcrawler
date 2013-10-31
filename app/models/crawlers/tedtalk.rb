@@ -1,0 +1,3 @@
+class Tedtalk < OnlineResource
+
+end

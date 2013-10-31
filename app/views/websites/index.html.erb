@@ -31,9 +31,9 @@
 	var doCrawl = function(website_id, website_name, resource_count, callback) {	 	
 	 	$.ajax({
 	 		type: 'GET',
-	 		url: '/' + website_name,
+	 		url: '/crawlers/' + website_name,
 	 		data: { 'id' : website_id,
-	 				'current_count' : resource_count
+	 				'current_count' : resource_count 
 	 		},
 	 		success: function(response){
 	 			console.log("doCrawl() success = " + JSON.stringify(response));
@@ -47,15 +47,21 @@
 	 			status = response.status;
 	 			if (status === "finished") {
 	 				updateLastCompleted(website_id, function(timestamp){
-	 					document.getElementById("timestamp_" + website_id).innerHTML = timestamp;
+	 					document.getElementById("timestamp_" + website_id).innerHTML = "JUST FINISHED";
 	 				});
 	 			}
 	 			else if (status === "in progress") {
-		 			/*if (resource_count < 1001) {
-		 				setTimeout(function(){
-							doCrawl(website_id, resource_count);
-						}, 5000);
-		 			}*/	
+		 			if (response.count !== resource_count) {
+			 			document.getElementById("timestamp_" + website_id).innerHTML = "In progress...";
+			 			setTimeout(function(){
+			 				doCrawl(website_id, website_name, response.count);
+			 			}, 5000);		 				
+		 			}
+		 			else {
+		 				updateLastCompleted(website_id, function(timestamp){
+		 					document.getElementById("timestamp_" + website_id).innerHTML = "In progress...";
+		 				});		 				
+		 			}
 	 			}
 	 			document.getElementById("timestamp_" + website_id).setAttribute("title", response.count + " records added.");
 	 			
